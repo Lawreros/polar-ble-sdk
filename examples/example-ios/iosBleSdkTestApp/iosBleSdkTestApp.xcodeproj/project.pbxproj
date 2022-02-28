@@ -3,11 +3,12 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 51;
+	objectVersion = 52;
 	objects = {
 
 /* Begin PBXBuildFile section */
 		89012D34F8DB65EDCBFFA887 /* Pods_iosBleSdkTestApp.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 21D7A4447CA1B886F5575E84 /* Pods_iosBleSdkTestApp.framework */; };
+		9113CF7627CD34AF00CF8F35 /* PolarBleSdk in Frameworks */ = {isa = PBXBuildFile; productRef = 9113CF7527CD34AF00CF8F35 /* PolarBleSdk */; };
 		A50C368E267B162E00D9F150 /* ButtonStyle.swift in Sources */ = {isa = PBXBuildFile; fileRef = A50C368D267B162E00D9F150 /* ButtonStyle.swift */; };
 		A50C3691267B271300D9F150 /* StreamSettings.swift in Sources */ = {isa = PBXBuildFile; fileRef = A50C3690267B271300D9F150 /* StreamSettings.swift */; };
 		A5367D1726676CB100CDDEBE /* Messages.swift in Sources */ = {isa = PBXBuildFile; fileRef = A5367D1626676CB100CDDEBE /* Messages.swift */; };
@@ -68,6 +69,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				9113CF7627CD34AF00CF8F35 /* PolarBleSdk in Frameworks */,
 				89012D34F8DB65EDCBFFA887 /* Pods_iosBleSdkTestApp.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -214,6 +216,9 @@
 			dependencies = (
 			);
 			name = iosBleSdkTestApp;
+			packageProductDependencies = (
+				9113CF7527CD34AF00CF8F35 /* PolarBleSdk */,
+			);
 			productName = iosBleSdkTestApp;
 			productReference = A5776BA22663A28700A36BA5 /* iosBleSdkTestApp.app */;
 			productType = "com.apple.product-type.application";
@@ -285,6 +290,9 @@
 				Base,
 			);
 			mainGroup = A5776B992663A28700A36BA5;
+			packageReferences = (
+				9113CF7427CD34AF00CF8F35 /* XCRemoteSwiftPackageReference "polar-ble-sdk" */,
+			);
 			productRefGroup = A5776BA32663A28700A36BA5 /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
@@ -536,7 +544,7 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_ASSET_PATHS = "\"iosBleSdkTestApp/Preview Content\"";
-				DEVELOPMENT_TEAM = 48T8QNDCP9;
+				DEVELOPMENT_TEAM = 7T9789YLBV;
 				ENABLE_PREVIEWS = YES;
 				INFOPLIST_FILE = iosBleSdkTestApp/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 14.0;
@@ -559,7 +567,7 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_ASSET_PATHS = "\"iosBleSdkTestApp/Preview Content\"";
-				DEVELOPMENT_TEAM = 48T8QNDCP9;
+				DEVELOPMENT_TEAM = 7T9789YLBV;
 				ENABLE_PREVIEWS = YES;
 				INFOPLIST_FILE = iosBleSdkTestApp/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 14.0;
@@ -698,6 +706,25 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		9113CF7427CD34AF00CF8F35 /* XCRemoteSwiftPackageReference "polar-ble-sdk" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/polarofficial/polar-ble-sdk.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 3.0.0;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		9113CF7527CD34AF00CF8F35 /* PolarBleSdk */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 9113CF7427CD34AF00CF8F35 /* XCRemoteSwiftPackageReference "polar-ble-sdk" */;
+			productName = PolarBleSdk;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = A5776B9A2663A28700A36BA5 /* Project object */;
 }
