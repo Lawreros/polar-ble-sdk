@@ -241,6 +241,9 @@ class PolarBleSdkManager : ObservableObject {
     
     func ecgStreamStart(settings: PolarBleSdk.PolarSensorSetting) {
         if case .connected(let deviceId) = deviceConnectionState {
+            let formatter = DateFormatter()
+            formatter.dateFormat = "HH:mm:ss.SSSS"
+            
             isEcgStreamOn = true
             ecgDisposable = api.startEcgStreaming(deviceId, settings: settings)
                 .observe(on: MainScheduler.instance)
@@ -249,6 +252,8 @@ class PolarBleSdkManager : ObservableObject {
                     case .next(let data):
                         for µv in data.samples {
                             NSLog("ECG    µV: \(µv)")
+                            let timestamp = formatter.string(from: Date())
+                            Logger.log("µV: \(µv)", timestamp, "ecg")
                         }
                     case .error(let err):
                         NSLog("ECG stream failed: \(err)")
@@ -671,7 +676,15 @@ extension PolarBleSdkManager : PolarBleApiSdkModeFeatureObserver {
 // MARK: - PolarBleApiDeviceHrObserver
 extension PolarBleSdkManager : PolarBleApiDeviceHrObserver {
     func hrValueReceived(_ identifier: String, data: PolarHrData) {
+        let formatter = DateFormatter()
+        formatter.dateFormat = "HH:mm:ss.SSSS"
+        
         NSLog("(\(identifier)) HR value: \(data.hr) rrsMs: \(data.rrsMs) rrs: \(data.rrs) contact: \(data.contact) contact supported: \(data.contactSupported)")
+        
+        let timestamp = formatter.string(from: Date())
+        
+        Logger.log("(\(identifier)) HR value: \(data.hr) rrsMs: \(data.rrsMs) rrs: \(data.rrs)", timestamp, "hr")
+        
     }
 }
 
@@ -687,5 +700,65 @@ extension PolarBleSdkManager {
         case disconnected
         case connecting(String)
         case connected(String)
+    }
+}
+
+// MARK: - Logger
+
+class Logger {
+    
+    static var TextFile_HR: URL? = {
+        guard let documentsDirectory = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first else { return nil }
+        let formatter = DateFormatter()
+        formatter.dateFormat = "dd-MM-yyyy"
+        let dateString = formatter.string(from: Date())
+        let fileName = "\(dateString)_HR.txt"
+        return documentsDirectory.appendingPathComponent(fileName)
+    }()
+    
+    static var TextFile_ECG: URL? = {
+        guard let documentsDirectory = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first else { return nil }
+        let formatter = DateFormatter()
+        formatter.dateFormat = "dd-MM-yyyy"
+        let dateString = formatter.string(from: Date())
+        let fileName = "\(dateString)_ECG.txt"
+        return documentsDirectory.appendingPathComponent(fileName)
+    }()
+    
+    
+    static func log(_ message: String, _ timestamp: String, _ source: String) {
+        guard let textFile_ecg = TextFile_ECG else {
+            return
+        }
+        guard let textFile_hr = TextFile_HR else {
+            return
+        }
+        
+        guard let data = (timestamp + ": " + message + "\n").data(using: String.Encoding.utf8) else { return }
+
+        if source == "ecg" {
+        
+            if FileManager.default.fileExists(atPath: textFile_ecg.path) {
+                if let fileHandle = try? FileHandle(forWritingTo: textFile_ecg) {
+                    fileHandle.seekToEndOfFile()
+                    fileHandle.write(data)
+                    fileHandle.closeFile()
+                }
+            } else {
+                try? data.write(to: textFile_ecg, options: .atomicWrite)
+            }
+        }
+        
+        if source == "hr" {
+            if FileManager.default.fileExists(atPath: textFile_hr.path) {
+                if let fileHandle = try? FileHandle(forWritingTo: textFile_hr) {
+                    fileHandle.seekToEndOfFile()
+                    fileHandle.write(data)
+                    fileHandle.closeFile()
+                }
+            } else {
+                try? data.write(to: textFile_hr, options: .atomicWrite)
+            }
+        }
     }
 }
