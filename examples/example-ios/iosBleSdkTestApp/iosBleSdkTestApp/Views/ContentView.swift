@@ -75,20 +75,6 @@ struct ContentView: View {
                             Button(bleSdkManager.isStreamOn(feature: DeviceStreamingFeature.gyro) ? "Stop GYRO Stream" : "Start GYRO Stream", action: { streamButtonToggle(DeviceStreamingFeature.gyro) })
                                 .buttonStyle(SecondaryButtonStyle(buttonState: getStreamButtonState(DeviceStreamingFeature.gyro)))
                             
-                            Button(bleSdkManager.isStreamOn(feature: DeviceStreamingFeature.magnetometer) ? "Stop MAGNETOMETER Stream" : "Start MAGNETOMETER Stream", action: { streamButtonToggle(DeviceStreamingFeature.magnetometer) })
-                                .buttonStyle(SecondaryButtonStyle(buttonState: getStreamButtonState(DeviceStreamingFeature.magnetometer)))
-                            
-                            Button(bleSdkManager.isStreamOn(feature: DeviceStreamingFeature.ppg) ? "Stop PPG Stream" : "Start PPG Stream", action: {
-                                streamButtonToggle(DeviceStreamingFeature.ppg) })
-                                .buttonStyle(SecondaryButtonStyle(buttonState: getStreamButtonState(DeviceStreamingFeature.ppg)))
-                            
-                            Button(bleSdkManager.isStreamOn(feature: DeviceStreamingFeature.ppi) ? "Stop PPI Stream" : "Start PPI Stream", action: {
-                                streamButtonToggle(DeviceStreamingFeature.ppi)})
-                                .buttonStyle(SecondaryButtonStyle(buttonState: getStreamButtonState(DeviceStreamingFeature.ppi)))
-                            
-                            Button(bleSdkManager.isSdkStreamModeEnabled ? "Disable SDK mode" : "Enable SDK mode", action: {
-                                bleSdkManager.sdkModeToggle() })
-                                .buttonStyle(SecondaryButtonStyle(buttonState: getSdkModeButtonState()))
                             
                         }.fullScreenCover(item: $bleSdkManager.streamSettings) { streamSettings in
                             if let settings = streamSettings {
@@ -98,17 +84,6 @@ struct ContentView: View {
                         
                         Divider()
                         Group {
-                            Text("Exercise:")
-                                .headerStyle()
-                                .frame(maxWidth: .infinity, alignment: .leading)
-                            
-                            Button("List exercises", action: { bleSdkManager.listExercises()})
-                                .buttonStyle(SecondaryButtonStyle(buttonState: getFtpButtonState()))
-                            Button("Read exercise", action: {bleSdkManager.readExercise()})
-                                .buttonStyle(SecondaryButtonStyle(buttonState: getFtpButtonState()))
-                            Button("Remove exercise", action: { bleSdkManager.removeExercise()})
-                                .buttonStyle(SecondaryButtonStyle(buttonState: getFtpButtonState()))
-                            
                             Text("H10 recording:")
                                 .headerStyle()
                                 .frame(maxWidth: .infinity, alignment: .leading)
@@ -119,12 +94,7 @@ struct ContentView: View {
                             Button("Read H10 recording status", action: { bleSdkManager.getH10RecordingStatus()})
                                 .buttonStyle(SecondaryButtonStyle(buttonState: getRecordingStatusButtonState()))
                             
-                            Text("Other:")
-                                .headerStyle()
-                                .frame(maxWidth: .infinity, alignment: .leading)
                             
-                            Button("Set time", action: { bleSdkManager.setTime()})
-                                .buttonStyle(SecondaryButtonStyle(buttonState: getFtpButtonState()))
                         }
                     }.disabled(!bleSdkManager.isDeviceConnected)
                 }.frame(maxWidth: .infinity)

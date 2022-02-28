@@ -250,10 +250,11 @@ class PolarBleSdkManager : ObservableObject {
                 .subscribe{ e in
                     switch e {
                     case .next(let data):
+                        let timestamp = formatter.string(from: Date())
+                        Logger.log("polar timestamp: \(data.timeStamp)", timestamp, "ecg")
+                        Logger.log("µV: \(data.samples)", "\(data.timeStamp)", "ecg")
                         for µv in data.samples {
                             NSLog("ECG    µV: \(µv)")
-                            let timestamp = formatter.string(from: Date())
-                            Logger.log("µV: \(µv)", timestamp, "ecg")
                         }
                     case .error(let err):
                         NSLog("ECG stream failed: \(err)")
@@ -455,64 +456,6 @@ class PolarBleSdkManager : ObservableObject {
         }
     }
     
-    func listExercises() {
-        if case .connected(let deviceId) = deviceConnectionState {
-            exerciseEntry = nil
-            api.fetchStoredExerciseList(deviceId)
-                .observe(on: MainScheduler.instance)
-                .subscribe{ e in
-                    switch e {
-                    case .completed:
-                        NSLog("list exercises completed")
-                    case .error(let err):
-                        NSLog("failed to list exercises: \(err)")
-                    case .next(let polarExerciseEntry):
-                        NSLog("entry: \(polarExerciseEntry.date.description) path: \(polarExerciseEntry.path) id: \(polarExerciseEntry.entryId)");
-                        self.exerciseEntry = polarExerciseEntry
-                    }
-                }.disposed(by: disposeBag)
-        }
-    }
-    
-    func readExercise() {
-        if case .connected(let deviceId) = deviceConnectionState {
-            guard let e = exerciseEntry else {
-                somethingFailed(text: "No exercise to read, please list the exercises first")
-                return
-            }
-            api.fetchExercise(deviceId, entry: e)
-                .observe(on: MainScheduler.instance)
-                .subscribe{ e in
-                    switch e {
-                    case .failure(let err):
-                        NSLog("failed to read exercises: \(err)")
-                    case .success(let data):
-                        NSLog("exercise data count: \(data.samples.count) samples: \(data.samples)")
-                    }
-                }.disposed(by: disposeBag)
-        }
-    }
-    
-    func removeExercise() {
-        if case .connected(let deviceId) = deviceConnectionState {
-            guard let entry = exerciseEntry else {
-                somethingFailed(text: "No exercise to read, please list the exercises first")
-                return
-            }
-            api.removeExercise(deviceId, entry: entry)
-                .observe(on: MainScheduler.instance)
-                .subscribe{ e in
-                    switch e {
-                    case .completed:
-                        self.exerciseEntry = nil
-                        NSLog("remove completed")
-                    case .error(let err):
-                        NSLog("failed to remove exercise: \(err)")
-                    }
-                }.disposed(by: disposeBag)
-        }
-    }
-    
     func h10RecordingToggle() {
         if case .connected(let deviceId) = deviceConnectionState {
             if isH10RecordingEnabled {
@@ -569,25 +512,6 @@ class PolarBleSdkManager : ObservableObject {
         }
     }
     
-    func setTime() {
-        if case .connected(let deviceId) = deviceConnectionState {
-            let time = Date()
-            let timeZone = TimeZone.current
-            api.setLocalTime(deviceId, time: time, zone: timeZone)
-                .observe(on: MainScheduler.instance)
-                .subscribe{ e in
-                    switch e {
-                    case .completed:
-                        let formatter = DateFormatter()
-                        formatter.dateStyle = .short
-                        formatter.timeStyle = .medium
-                        self.generalMessage = Message(text: "\(formatter.string(from: time)) set to device \(deviceId)")
-                    case .error(let err):
-                        self.somethingFailed(text: "time set failed: \(err)")
-                    }
-                }.disposed(by: disposeBag)
-        }
-    }
     
     private func somethingFailed(text: String) {
         generalError = Message(text:text)
@@ -683,7 +607,7 @@ extension PolarBleSdkManager : PolarBleApiDeviceHrObserver {
         
         let timestamp = formatter.string(from: Date())
         
-        Logger.log("(\(identifier)) HR value: \(data.hr) rrsMs: \(data.rrsMs) rrs: \(data.rrs)", timestamp, "hr")
+        Logger.log("BPM: \(data.hr) rrsMs:\(data.rrsMs)", timestamp, "hr")
         
     }
 }
