@@ -17,7 +17,7 @@ struct ContentView: View {
     
     var body: some View {
         VStack {
-            Text("Polar BLE SDK example app")
+            Text("PSHR_v2 BLE App")
                 .bold()
             
             ScrollView(.vertical) {
@@ -33,12 +33,12 @@ struct ContentView: View {
                             .headerStyle()
                             .frame(maxWidth: .infinity, alignment: .leading)
                         
-                        Button( bleSdkManager.isBroadcastListenOn ? "Listening broadcast" : "Listen broadcast", action: {bleSdkManager.broadcastToggle()})
-                            .buttonStyle(PrimaryButtonStyle(buttonState: getBroadcastButtonState()))
+//                        Button( bleSdkManager.isBroadcastListenOn ? "Listening broadcast" : "Listen broadcast", action: {bleSdkManager.broadcastToggle()})
+//                            .buttonStyle(PrimaryButtonStyle(buttonState: getBroadcastButtonState()))
                         
                         switch bleSdkManager.deviceConnectionState {
                         case .disconnected:
-                            Button("Connect", action: {bleSdkManager.connectToDevice()})
+                            Button("Connection Status", action: {bleSdkManager.connectToDevice()})
                                 .buttonStyle(PrimaryButtonStyle(buttonState: getConnectButtonState()))
                         case .connecting(let deviceId):
                             Button("Connecting \(deviceId)", action: {})
@@ -52,8 +52,8 @@ struct ContentView: View {
                         Button("Auto Connect", action: { bleSdkManager.autoConnect()})
                             .buttonStyle(PrimaryButtonStyle(buttonState: getAutoConnectButtonState()))
                         
-                        Button( bleSdkManager.isSearchOn ? "Stop device scan" : "Scan devices", action: {bleSdkManager.searchToggle()})
-                            .buttonStyle(PrimaryButtonStyle(buttonState: getSearchButtonState()))
+//                        Button( bleSdkManager.isSearchOn ? "Stop device scan" : "Scan devices", action: {bleSdkManager.searchToggle()})
+//                            .buttonStyle(PrimaryButtonStyle(buttonState: getSearchButtonState()))
                         
                     }.disabled(!bleSdkManager.isBluetoothOn)
                     
@@ -72,8 +72,8 @@ struct ContentView: View {
                             Button(bleSdkManager.isStreamOn(feature: DeviceStreamingFeature.acc) ? "Stop ACC Stream" : "Start ACC Stream", action: { streamButtonToggle(DeviceStreamingFeature.acc)})
                                 .buttonStyle(SecondaryButtonStyle(buttonState: getStreamButtonState(DeviceStreamingFeature.acc)))
                             
-                            Button(bleSdkManager.isStreamOn(feature: DeviceStreamingFeature.gyro) ? "Stop GYRO Stream" : "Start GYRO Stream", action: { streamButtonToggle(DeviceStreamingFeature.gyro) })
-                                .buttonStyle(SecondaryButtonStyle(buttonState: getStreamButtonState(DeviceStreamingFeature.gyro)))
+//                            Button(bleSdkManager.isStreamOn(feature: DeviceStreamingFeature.gyro) ? "Stop GYRO Stream" : "Start GYRO Stream", action: { streamButtonToggle(DeviceStreamingFeature.gyro) })
+//                                .buttonStyle(SecondaryButtonStyle(buttonState: getStreamButtonState(DeviceStreamingFeature.gyro)))
                             
                             
                         }.fullScreenCover(item: $bleSdkManager.streamSettings) { streamSettings in
@@ -82,20 +82,20 @@ struct ContentView: View {
                             }
                         }
                         
-                        Divider()
-                        Group {
-                            Text("H10 recording:")
-                                .headerStyle()
-                                .frame(maxWidth: .infinity, alignment: .leading)
-                            
-                            Button(bleSdkManager.isH10RecordingEnabled ? "Stop H10 recording": "Start H10 recording", action: { bleSdkManager.h10RecordingToggle() })
-                                .buttonStyle(SecondaryButtonStyle(buttonState: getRecordingButtonState()))
-                            
-                            Button("Read H10 recording status", action: { bleSdkManager.getH10RecordingStatus()})
-                                .buttonStyle(SecondaryButtonStyle(buttonState: getRecordingStatusButtonState()))
-                            
-                            
-                        }
+//                        Divider()
+//                        Group {
+//                            Text("H10 recording:")
+//                                .headerStyle()
+//                                .frame(maxWidth: .infinity, alignment: .leading)
+//
+//                            Button(bleSdkManager.isH10RecordingEnabled ? "Stop H10 recording": "Start H10 recording", action: { bleSdkManager.h10RecordingToggle() })
+//                                .buttonStyle(SecondaryButtonStyle(buttonState: getRecordingButtonState()))
+//
+//                            Button("Read H10 recording status", action: { bleSdkManager.getH10RecordingStatus()})
+//                                .buttonStyle(SecondaryButtonStyle(buttonState: getRecordingStatusButtonState()))
+//
+//
+//                        }
                     }.disabled(!bleSdkManager.isDeviceConnected)
                 }.frame(maxWidth: .infinity)
             }

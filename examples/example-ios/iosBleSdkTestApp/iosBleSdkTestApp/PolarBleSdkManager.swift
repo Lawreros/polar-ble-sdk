@@ -251,8 +251,11 @@ class PolarBleSdkManager : ObservableObject {
                     switch e {
                     case .next(let data):
                         let timestamp = formatter.string(from: Date())
-                        Logger.log("polar timestamp: \(data.timeStamp)", timestamp, "ecg")
-                        Logger.log("µV: \(data.samples)", "\(data.timeStamp)", "ecg")
+                        //Logger.log("polar timestamp: \(data.timeStamp)", timestamp, "ecg")
+                        //Logger.log("µV: \(data.samples)", "\(data.timeStamp)", "ecg")
+                        let stringArray = data.samples.map { String($0) }
+                        let ecg_string = stringArray.joined(separator: "\t")
+                        Logger.log("\(data.timeStamp)\t\(ecg_string)", timestamp, "ecg")
                         for µv in data.samples {
                             NSLog("ECG    µV: \(µv)")
                         }
@@ -606,8 +609,20 @@ extension PolarBleSdkManager : PolarBleApiDeviceHrObserver {
         NSLog("(\(identifier)) HR value: \(data.hr) rrsMs: \(data.rrsMs) rrs: \(data.rrs) contact: \(data.contact) contact supported: \(data.contactSupported)")
         
         let timestamp = formatter.string(from: Date())
+        let RR_count = data.rrsMs.count
+        var RRs: String = "ERROR"
         
-        Logger.log("BPM: \(data.hr) rrsMs:\(data.rrsMs)", timestamp, "hr")
+        if RR_count == 0 {
+            RRs = "0\t0\t0"
+        } else if RR_count == 1 {
+            RRs = "\(data.rrsMs[0])\t0\t0"
+        } else if RR_count == 2 {
+            RRs = "\(data.rrsMs[0])\t\(data.rrsMs[1])\t0"
+        } else if RR_count == 3 {
+            RRs = "\(data.rrsMs[0])\t\(data.rrsMs[1])\t\(data.rrsMs[2])"
+        }
+        
+        Logger.log("\(data.hr)\t\(RRs)", timestamp, "hr")
         
     }
 }
@@ -634,18 +649,18 @@ class Logger {
     static var TextFile_HR: URL? = {
         guard let documentsDirectory = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first else { return nil }
         let formatter = DateFormatter()
-        formatter.dateFormat = "dd-MM-yyyy"
+        formatter.dateFormat = "MM-dd-yyyy"
         let dateString = formatter.string(from: Date())
-        let fileName = "\(dateString)_HR.txt"
+        let fileName = "HR_\(dateString).txt"
         return documentsDirectory.appendingPathComponent(fileName)
     }()
     
     static var TextFile_ECG: URL? = {
         guard let documentsDirectory = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first else { return nil }
         let formatter = DateFormatter()
-        formatter.dateFormat = "dd-MM-yyyy"
+        formatter.dateFormat = "MM-dd-yyyy"
         let dateString = formatter.string(from: Date())
-        let fileName = "\(dateString)_ECG.txt"
+        let fileName = "ECG_\(dateString).txt"
         return documentsDirectory.appendingPathComponent(fileName)
     }()
     
@@ -658,7 +673,7 @@ class Logger {
             return
         }
         
-        guard let data = (timestamp + ": " + message + "\n").data(using: String.Encoding.utf8) else { return }
+        guard let data = (timestamp + "\t" + message + "\n").data(using: String.Encoding.utf8) else { return }
 
         if source == "ecg" {
         
