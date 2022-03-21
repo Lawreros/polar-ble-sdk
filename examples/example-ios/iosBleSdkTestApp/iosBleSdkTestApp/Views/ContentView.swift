@@ -69,8 +69,8 @@ struct ContentView: View {
                                 streamButtonToggle(DeviceStreamingFeature.ecg) })
                                 .buttonStyle(SecondaryButtonStyle(buttonState: getStreamButtonState(DeviceStreamingFeature.ecg)))
                             
-                            Button(bleSdkManager.isStreamOn(feature: DeviceStreamingFeature.acc) ? "Stop ACC Stream" : "Start ACC Stream", action: { streamButtonToggle(DeviceStreamingFeature.acc)})
-                                .buttonStyle(SecondaryButtonStyle(buttonState: getStreamButtonState(DeviceStreamingFeature.acc)))
+//                            Button(bleSdkManager.isStreamOn(feature: DeviceStreamingFeature.acc) ? "Stop ACC Stream" : "Start ACC Stream", action: { streamButtonToggle(DeviceStreamingFeature.acc)})
+//                                .buttonStyle(SecondaryButtonStyle(buttonState: getStreamButtonState(DeviceStreamingFeature.acc)))
                             
 //                            Button(bleSdkManager.isStreamOn(feature: DeviceStreamingFeature.gyro) ? "Stop GYRO Stream" : "Start GYRO Stream", action: { streamButtonToggle(DeviceStreamingFeature.gyro) })
 //                                .buttonStyle(SecondaryButtonStyle(buttonState: getStreamButtonState(DeviceStreamingFeature.gyro)))
@@ -96,6 +96,32 @@ struct ContentView: View {
 //
 //
 //                        }
+                        Divider()
+                        Group{
+                            Text("Recieved Data Packet")
+                                .headerStyle()
+                                .frame(maxWidth: .infinity, alignment: .leading)
+                            Text("HR: \(bleSdkManager.hr_message)")
+                                .frame(minWidth: 0, maxWidth: .infinity)
+                                .font(.system(size: 30))
+                                .padding()
+                                .foregroundColor(.white)
+                                .overlay(
+                                    RoundedRectangle(cornerRadius: 10)
+                                        .stroke(Color.white, lineWidth: 2)
+                                )
+                            
+                            Text("ECG: \(bleSdkManager.ecg_message)")
+                                .frame(minWidth: 0, maxWidth: .infinity)
+                                .font(.system(size: 30))
+                                .padding()
+                                .foregroundColor(.white)
+                                .overlay(
+                                    RoundedRectangle(cornerRadius: 10)
+                                        .stroke(Color.white, lineWidth: 2)
+                                )
+                            
+                        }
                     }.disabled(!bleSdkManager.isDeviceConnected)
                 }.frame(maxWidth: .infinity)
             }

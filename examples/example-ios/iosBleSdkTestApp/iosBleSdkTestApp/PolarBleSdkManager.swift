@@ -4,6 +4,7 @@ import Foundation
 import PolarBleSdk
 import RxSwift
 import CoreBluetooth
+import AudioToolbox
 
 /// PolarBleSdkManager demonstrates how to user PolarBleSDK API
 class PolarBleSdkManager : ObservableObject {
@@ -13,6 +14,10 @@ class PolarBleSdkManager : ObservableObject {
     
     // TODO replace the device id with your device ID or use the auto connect to when connecting to device
     private var deviceId = "8C4CAD2D"
+    
+    @Published public var hr_message = ""
+    @Published public var ecg_message = ""
+    
     
     @Published private(set) var isBluetoothOn: Bool
     @Published private(set) var isBroadcastListenOn: Bool = false
@@ -256,6 +261,8 @@ class PolarBleSdkManager : ObservableObject {
                         let stringArray = data.samples.map { String($0) }
                         let ecg_string = stringArray.joined(separator: "\t")
                         Logger.log("\(data.timeStamp)\t\(ecg_string)", timestamp, "ecg")
+                        self.ecg_message = "\(timestamp)\n\(data.samples[0])\t\(data.samples[1])"
+                        
                         for µv in data.samples {
                             NSLog("ECG    µV: \(µv)")
                         }
@@ -559,6 +566,10 @@ extension PolarBleSdkManager : PolarBleApiObserver {
         self.isFtpFeatureSupported = false
         self.isH10RecordingSupported = false
         self.supportedStreamFeatures = Set<DeviceStreamingFeature>()
+        for _ in 1...4 {
+        AudioServicesPlaySystemSound(kSystemSoundID_Vibrate)
+            sleep(1)
+        }
     }
 }
 
@@ -623,6 +634,7 @@ extension PolarBleSdkManager : PolarBleApiDeviceHrObserver {
         }
         
         Logger.log("\(data.hr)\t\(RRs)", timestamp, "hr")
+        hr_message = "\(timestamp)\n\(data.rrsMs)"
         
     }
 }
