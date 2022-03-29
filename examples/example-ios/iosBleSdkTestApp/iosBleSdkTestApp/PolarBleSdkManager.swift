@@ -5,6 +5,7 @@ import PolarBleSdk
 import RxSwift
 import CoreBluetooth
 import AudioToolbox
+import AVFoundation
 
 /// PolarBleSdkManager demonstrates how to user PolarBleSDK API
 class PolarBleSdkManager : ObservableObject {
@@ -17,6 +18,7 @@ class PolarBleSdkManager : ObservableObject {
     
     @Published public var hr_message = ""
     @Published public var ecg_message = ""
+    @Published public var battery_level = ""
     
     
     @Published private(set) var isBluetoothOn: Bool
@@ -268,6 +270,10 @@ class PolarBleSdkManager : ObservableObject {
                         }
                     case .error(let err):
                         NSLog("ECG stream failed: \(err)")
+                        for _ in 1...2 {
+                            AudioServicesPlayAlertSound(SystemSoundID(1005))
+                            sleep(1)
+                        }
                         self.isEcgStreamOn = false
                     case .completed:
                         NSLog("ECG stream completed")
@@ -566,9 +572,14 @@ extension PolarBleSdkManager : PolarBleApiObserver {
         self.isFtpFeatureSupported = false
         self.isH10RecordingSupported = false
         self.supportedStreamFeatures = Set<DeviceStreamingFeature>()
-        for _ in 1...4 {
-        AudioServicesPlaySystemSound(kSystemSoundID_Vibrate)
-            sleep(1)
+//        for _ in 1...4 {
+//        AudioServicesPlaySystemSound(kSystemSoundID_Vibrate)
+//        AudioServicesPlayAlertSound(SystemSoundID(1323))
+//            sleep(1)
+//        }
+        for _ in 1...2 {
+        AudioServicesPlayAlertSound(SystemSoundID(1005))
+        sleep(1)
         }
     }
 }
@@ -577,6 +588,7 @@ extension PolarBleSdkManager : PolarBleApiObserver {
 extension PolarBleSdkManager : PolarBleApiDeviceInfoObserver {
     func batteryLevelReceived(_ identifier: String, batteryLevel: UInt) {
         NSLog("battery level updated: \(batteryLevel)")
+        battery_level = "\(batteryLevel)"
     }
     
     func disInformationReceived(_ identifier: String, uuid: CBUUID, value: String) {

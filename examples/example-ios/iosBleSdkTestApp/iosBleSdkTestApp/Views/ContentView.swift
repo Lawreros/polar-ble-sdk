@@ -120,7 +120,15 @@ struct ContentView: View {
                                     RoundedRectangle(cornerRadius: 10)
                                         .stroke(Color.white, lineWidth: 2)
                                 )
-                            
+                            Text("Battery: \(bleSdkManager.battery_level)%")
+                                .frame(minWidth: 0, maxWidth: .infinity)
+                                .font(.system(size: 15))
+                                .padding()
+                                .foregroundColor(.white)
+                                .overlay(
+                                    RoundedRectangle(cornerRadius: 5)
+                                        .stroke(Color.white, lineWidth:2)
+                                )
                         }
                     }.disabled(!bleSdkManager.isDeviceConnected)
                 }.frame(maxWidth: .infinity)
